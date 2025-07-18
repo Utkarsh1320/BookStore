@@ -1,5 +1,6 @@
 package com.example.bookstore.Service;
 
+import com.example.bookstore.ServiceInterface.BookService;
 import com.example.bookstore.Model.Book;
 import com.example.bookstore.Repository.BookRepository;
 import jakarta.transaction.Transactional;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     public BookServiceImpl(BookRepository bookRepository){

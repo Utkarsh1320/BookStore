@@ -5,15 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Book")
+@Table(name = "book")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class Book {
@@ -21,17 +19,32 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @Column(nullable = false)
     private String isbn;
 
     @Column(nullable = false)
-    private double price;
+    private Double price;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate publicationDate;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "author_book",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
+
+    public Book(Long id, String title, String isbn, Double price, LocalDate publicationDate ){
+        this.id = id;
+        this.title = title;
+        this.isbn = isbn;
+        this.price = price;
+        this.publicationDate = publicationDate;
+    }
 
 }
