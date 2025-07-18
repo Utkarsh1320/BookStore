@@ -2,7 +2,7 @@
 //
 //import com.example.bookstore.Model.Book;
 //import com.example.bookstore.Repository.BookRepository;
-//import com.example.bookstore.Service.BookService;
+//import ServiceInterface.BookService;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.databind.SerializationFeature;
 //import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

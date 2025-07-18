@@ -1,4 +1,4 @@
-package com.example.bookstore.Service;
+package com.example.bookstore.ServiceInterface;
 
 import com.example.bookstore.Model.Book;
 

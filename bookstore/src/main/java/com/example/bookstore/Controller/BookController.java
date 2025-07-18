@@ -3,7 +3,7 @@ package com.example.bookstore.Controller;
 import com.example.bookstore.Dto.BookRequestDTO;
 import com.example.bookstore.Dto.BookResponseDTO;
 import com.example.bookstore.Model.Book;
-import com.example.bookstore.Service.BookService;
+import com.example.bookstore.ServiceInterface.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,14 +80,6 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-//    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails){
-//        Book updatedBook = bookService.updateBook(id, bookDetails);
-//        if(updatedBook != null){
-//            return ResponseEntity.ok(updatedBook);
-//        }else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
     public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequestDTO bookRequestDTO) {
         // The service method expects a full Book entity, so we convert the DTO
         // and set the ID from the path.

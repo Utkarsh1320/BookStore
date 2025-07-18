@@ -1,5 +1,6 @@
 package com.example.bookstore.Service;
 
+import com.example.bookstore.ServiceInterface.BookService;
 import com.example.bookstore.Model.Book;
 import com.example.bookstore.Repository.BookRepository;
 import com.example.bookstore.Service.BookService;
