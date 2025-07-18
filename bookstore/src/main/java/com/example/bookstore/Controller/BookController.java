@@ -1,9 +1,11 @@
 package com.example.bookstore.Controller;
 
+import com.example.bookstore.Dto.AuthorResponseDTO; // NEW import for DTO conversion
 import com.example.bookstore.Dto.BookRequestDTO;
 import com.example.bookstore.Dto.BookResponseDTO;
+import com.example.bookstore.Model.Author; // NEW import for entity conversion
 import com.example.bookstore.Model.Book;
-import com.example.bookstore.Service.BookService;
+import com.example.bookstore.ServiceInterface.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,33 +22,53 @@ public class BookController {
     public BookController(BookService bookService){
         this.bookService = bookService;
     }
+
     private BookResponseDTO convertToDto(Book book){
         if(book == null){
             return null;
         }
+
+        // Convert the Set<Author> to a Set<AuthorResponseDTO>
+        Set<AuthorResponseDTO> authorDTOs = book.getAuthors().stream()
+                .map(this::convertToAuthorDto)
+                .collect(Collectors.toSet());
+
         return new BookResponseDTO(
                 book.getId(),
                 book.getTitle(),
                 book.getIsbn(),
                 book.getPrice(),
-                book.getPublicationDate()
+                book.getPublicationDate(),
+                authorDTOs
         );
     }
-    private Book convertToEntity(@Valid BookRequestDTO bookResponseDTO){
-        if(bookResponseDTO == null) return null;
+
+    private AuthorResponseDTO convertToAuthorDto(Author author) {
+        if(author == null) return null;
+        return new AuthorResponseDTO(
+                author.getId(),
+                author.getFirstName(),
+                author.getLastName(),
+                author.getBirthDate()
+        );
+    }
+
+    private Book convertToEntity(@Valid BookRequestDTO bookRequestDTO){
+        if(bookRequestDTO == null) return null;
         return new Book(
                 null,
-                bookResponseDTO.getTitle(),
-                bookResponseDTO.getIsbn(),
-                bookResponseDTO.getPrice(),
-                bookResponseDTO.getPublicationDate()
+                bookRequestDTO.getTitle(),
+                bookRequestDTO.getIsbn(),
+                bookRequestDTO.getPrice(),
+                bookRequestDTO.getPublicationDate(),
+                null
         );
     }
 
     @PostMapping
     public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookRequestDTO bookRequestDTO){
         Book bookToSave = convertToEntity(bookRequestDTO);
-        Book savedBook = bookService.saveBook(bookToSave);
+        Book savedBook = bookService.saveBook(bookToSave, bookRequestDTO.getAuthorIds());
         return new ResponseEntity<>(convertToDto(savedBook), HttpStatus.CREATED);
     }
 
@@ -58,21 +80,18 @@ public class BookController {
         }else {
             books = bookService.getAllBooks();
         }
+
+        // UPDATED: Use the updated convertToDto method
         List<BookResponseDTO> bookDTOs = books.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(bookDTOs);
     }
+
     @GetMapping("/{id}")
-//    public ResponseEntity<Book> getBookById(@PathVariable Long id){
-//        Optional<Book> book = bookService.getBookById(id);
-//        return book.map(ResponseEntity :: ok).orElseGet(() -> ResponseEntity.notFound().build());
-//    }
     public ResponseEntity<BookResponseDTO> getBookById(@PathVariable Long id) {
         Optional<Book> bookOptional = bookService.getBookById(id);
-
         if (bookOptional.isPresent()) {
-            // Convert Book entity to BookResponseDTO
             return ResponseEntity.ok(convertToDto(bookOptional.get()));
         } else {
             return ResponseEntity.notFound().build();
@@ -80,24 +99,10 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-//    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails){
-//        Book updatedBook = bookService.updateBook(id, bookDetails);
-//        if(updatedBook != null){
-//            return ResponseEntity.ok(updatedBook);
-//        }else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
     public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequestDTO bookRequestDTO) {
-        // The service method expects a full Book entity, so we convert the DTO
-        // and set the ID from the path.
         Book bookToUpdate = convertToEntity(bookRequestDTO);
-        bookToUpdate.setId(id); // Set the ID for the service to find/update
-
-        Book updatedBook = bookService.updateBook(id, bookToUpdate); // Pass id and entity
-
+        Book updatedBook = bookService.updateBook(id, bookToUpdate, bookRequestDTO.getAuthorIds()); // CRITICAL CHANGE
         if (updatedBook != null) {
-            // Convert updated Entity back to Response DTO
             return ResponseEntity.ok(convertToDto(updatedBook));
         } else {
             return ResponseEntity.notFound().build();
@@ -110,9 +115,7 @@ public class BookController {
             bookService.deleteBook(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            // In a real app, you might distinguish between 'not found' and other errors
             return ResponseEntity.notFound().build();
         }
     }
-
 }
