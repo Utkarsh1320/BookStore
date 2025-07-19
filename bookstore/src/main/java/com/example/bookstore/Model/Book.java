@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -37,14 +38,15 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    private Set<Author> authors;
+    private Set<Author> authors = new HashSet<>();
 
-    public Book(Long id, String title, String isbn, Double price, LocalDate publicationDate ){
+    public Book(Long id, String title, String isbn, Double price, LocalDate publicationDate, Set<Author> authors ){
         this.id = id;
         this.title = title;
         this.isbn = isbn;
         this.price = price;
         this.publicationDate = publicationDate;
+        this.authors = authors;
     }
 
 }

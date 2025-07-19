@@ -1,27 +1,44 @@
 package com.example.bookstore.Service;
 
+import com.example.bookstore.Model.Author;
+import com.example.bookstore.Repository.AuthorRepository;
 import com.example.bookstore.ServiceInterface.BookService;
 import com.example.bookstore.Model.Book;
 import com.example.bookstore.Repository.BookRepository;
-import com.example.bookstore.Service.BookService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
-    public BookServiceImpl(BookRepository bookRepository){
+    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository){
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
     @Transactional
-    public Book saveBook(Book book){
+    public Book saveBook(Book book, Set<Long> authorIds){
+        Set<Author> authors = findAuthorsByIds(authorIds);
+        book.setAuthors(authors);
         return bookRepository.save(book);
+    }
+
+    private Set<Author> findAuthorsByIds(Set<Long> authorIds) {
+        if (authorIds == null || authorIds.isEmpty()) {
+            return new HashSet<>();
+        }
+        List<Author> authors = authorRepository.findAllById(authorIds);
+//        if (authors.size() != authorIds.size()) {
+//        }
+        return new HashSet<>(authors);
     }
 
     @Override
