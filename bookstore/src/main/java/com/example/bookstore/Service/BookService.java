@@ -1,15 +1,15 @@
-package com.example.bookstore.ServiceInterface;
+package com.example.bookstore.Service;
 
 import com.example.bookstore.Model.Book;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface BookService {
-    Book saveBook(Book book, Set<Long> authorIds);
+    Book saveBook(Book book);
     List<Book> getAllBooks();
     Optional<Book> getBookById(Long id);
-    Book updateBook(Long id, Book bookDetails, Set<Long> authorIds);
+    Book updateBook(Long id, Book bookDetails);
     void deleteBook(Long id);
     List<Book> searchBooksByTitle(String titleKeyword);
 }
