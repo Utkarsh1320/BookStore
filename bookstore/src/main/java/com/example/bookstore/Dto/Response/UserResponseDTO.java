@@ -1,14 +1,19 @@
 package com.example.bookstore.Dto.Response;
 
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.Set;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponseDTO {
     private Long id;
     private String firstName;
     private String lastName;
-    private String address;
-    private String username;
-    private String password;
     private String email;
 
     private Set<LoanResponseDTO> loans;
