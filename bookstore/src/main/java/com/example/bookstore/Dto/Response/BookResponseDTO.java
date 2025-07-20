@@ -1,4 +1,4 @@
-package com.example.bookstore.Dto; // Ensure this package is correct
+package com.example.bookstore.Dto.Response; // Ensure this package is correct
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"authors", "loans"})
 @ToString
 public class Book {
     @Id
@@ -39,6 +39,9 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private Set<Author> authors = new HashSet<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true )
+    private Set<Loan> loans = new HashSet<>();
 
     public Book(Long id, String title, String isbn, Double price, LocalDate publicationDate, Set<Author> authors ){
         this.id = id;

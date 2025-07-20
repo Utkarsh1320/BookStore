@@ -1,4 +1,4 @@
-package com.example.bookstore.Dto;
+package com.example.bookstore.Dto.Request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -31,6 +31,4 @@ public class BookRequestDTO {
     private LocalDate publicationDate;
 
     private Set<Long> authorIds;
-
-
 }

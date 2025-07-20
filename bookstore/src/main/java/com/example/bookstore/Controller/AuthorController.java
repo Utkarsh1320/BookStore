@@ -1,13 +1,12 @@
 package com.example.bookstore.Controller;
 
-import com.example.bookstore.Dto.AuthorRequestDTO;
-import com.example.bookstore.Dto.AuthorResponseDTO;
+import com.example.bookstore.Dto.Request.AuthorRequestDTO;
+import com.example.bookstore.Dto.Response.AuthorResponseDTO;
 import com.example.bookstore.Model.Author;
 import com.example.bookstore.ServiceInterface.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

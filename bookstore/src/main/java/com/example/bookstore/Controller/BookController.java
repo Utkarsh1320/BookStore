@@ -1,8 +1,8 @@
 package com.example.bookstore.Controller;
 
-import com.example.bookstore.Dto.AuthorResponseDTO;
-import com.example.bookstore.Dto.BookRequestDTO;
-import com.example.bookstore.Dto.BookResponseDTO;
+import com.example.bookstore.Dto.Response.AuthorResponseDTO;
+import com.example.bookstore.Dto.Request.BookRequestDTO;
+import com.example.bookstore.Dto.Response.BookResponseDTO;
 import com.example.bookstore.Model.Author;
 import com.example.bookstore.Model.Book;
 import com.example.bookstore.ServiceInterface.BookService;
