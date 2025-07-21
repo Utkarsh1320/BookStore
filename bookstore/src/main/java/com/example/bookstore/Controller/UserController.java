@@ -1,6 +1,7 @@
 package com.example.bookstore.Controller;
 
 import com.example.bookstore.Dto.Request.UserRequestDTO;
+import com.example.bookstore.Dto.Response.LoanResponseDTO;
 import com.example.bookstore.Dto.Response.UserResponseDTO;
 import com.example.bookstore.Model.User;
 import com.example.bookstore.ServiceInterface.UserService;
@@ -23,12 +24,27 @@ public class UserController {
     }
     private UserResponseDTO convertToDto(User user){
         if(user == null) return null;
+        List<LoanResponseDTO> loanDtos = null;
+        if(user.getLoans() != null && !user.getLoans().isEmpty()){
+            loanDtos = user.getLoans().stream()
+                    .map(loan -> new LoanResponseDTO(
+                            loan.getId(),
+                            loan.getBorrowDate(),
+                            loan.getReturnDate(),
+                            (loan.getUser() != null) ? loan.getUser().getId() : null,
+                            (loan.getUser() != null) ? loan.getUser().getFirstName() : null,
+                            (loan.getBook() != null) ? loan.getBook().getId() : null,
+                            (loan.getBook() != null) ? loan.getBook().getTitle() : null
+
+                    ))
+                    .toList();
+        }
         return new UserResponseDTO(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                null
+                loanDtos
         );
     }
     private User convertToEntity(@Valid UserRequestDTO userRequestDTO){

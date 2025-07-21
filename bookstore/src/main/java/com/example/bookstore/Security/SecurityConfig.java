@@ -2,6 +2,8 @@ package com.example.bookstore.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
@@ -11,7 +13,6 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.config.Customizer;
 
 @Configuration
 public class SecurityConfig {
@@ -20,13 +21,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/users").permitAll()
+                        // Only allow POST requests to /api/users to be public
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        // All other requests to /api/users require authentication
+                        .requestMatchers("/api/users").authenticated()
+                        // Allow Swagger UI and API docs to be public
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
-                // Use the modern, non-deprecated way to configure form login
                 .formLogin(Customizer.withDefaults())
-                // Configure stateless CSRF protection for our API
                 .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
@@ -36,7 +40,7 @@ public class SecurityConfig {
     public UserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder) {
         UserDetails user = User.builder()
                 .username("testuser")
-                .password(passwordEncoder.encode("password"))
+                .password(passwordEncoder.encode("StrongP@ssword123"))
                 .roles("USER")
                 .build();
 

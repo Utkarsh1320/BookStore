@@ -5,10 +5,11 @@ import jakarta.servlet.annotation.ServletSecurity;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,5 +40,5 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Loan> loans = new HashSet<>();
+    private List<Loan> loans;
 }

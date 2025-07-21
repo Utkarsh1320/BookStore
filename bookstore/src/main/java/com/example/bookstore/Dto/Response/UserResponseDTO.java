@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 @Getter
 @Setter
@@ -16,5 +17,5 @@ public class UserResponseDTO {
     private String lastName;
     private String email;
 
-    private Set<LoanResponseDTO> loans;
+    private List<LoanResponseDTO> loans;
 }

@@ -37,23 +37,15 @@ public class LoanController {
                 loanRequestDTO.getUserId(),
                 loanRequestDTO.getBookId()
         );
-
-        if (loanOptional.isPresent()) {
-            return new ResponseEntity<>(convertToDto(loanOptional.get()), HttpStatus.CREATED);
-        } else {
-            // This could be for a non-existent user/book or a book already on loan
-            return ResponseEntity.badRequest().build();
-        }
+        return loanOptional.
+                map(loan -> new ResponseEntity<>(convertToDto(loan), HttpStatus.CREATED))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
     @PutMapping("/return/{loanId}")
     public ResponseEntity<LoanResponseDTO> returnBook(@PathVariable Long loanId) {
         Optional<Loan> loanOptional = loanService.returnBook(loanId);
-
-        if (loanOptional.isPresent()) {
-            return ResponseEntity.ok(convertToDto(loanOptional.get()));
-        } else {
-            // This could be for a non-existent loan or an already returned book
-            return ResponseEntity.notFound().build();
-        }
+        return loanOptional
+                .map(loan -> ResponseEntity.ok(convertToDto(loan)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
