@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder= passwordEncoder;
     }
 
+
     @Override
     public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));

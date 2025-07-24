@@ -3,7 +3,7 @@ package com.example.bookstore.Controller;
 import com.example.bookstore.Dto.Request.LoanRequestDTO;
 import com.example.bookstore.Dto.Response.LoanResponseDTO;
 import com.example.bookstore.Model.Loan;
-import com.example.bookstore.Service.LoanService;
+import com.example.bookstore.ServiceInterface.LoanService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

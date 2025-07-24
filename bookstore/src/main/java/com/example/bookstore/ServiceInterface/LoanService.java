@@ -1,9 +1,8 @@
-package com.example.bookstore.Service;
+package com.example.bookstore.ServiceInterface;
 
 
 import com.example.bookstore.Model.Loan;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface LoanService {

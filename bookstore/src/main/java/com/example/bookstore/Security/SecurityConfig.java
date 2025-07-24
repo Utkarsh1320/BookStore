@@ -14,63 +14,84 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource; // <-- Import CorsConfigurationSource
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Collections;
 
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults()) // <--- ENABLE CORS here, it will find the bean below
-                .authorizeHttpRequests(authorize -> authorize
-                        // Allow POST requests to /api/users (for user creation/registration)
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        // Other /api/users methods (GET, PUT, DELETE) require authentication
-                        .requestMatchers("/api/users/**").authenticated() // Protects /api/users, /api/users/{id} etc.
-                        // Protect /api/books and /api/loans (they will also require authentication)
-                        .requestMatchers("/api/books/**").authenticated()
-                        .requestMatchers("/api/loans/**").authenticated()
-                        // Allow Swagger UI and API docs to be publicly accessible
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        // All other requests require authentication
-                        .anyRequest().authenticated()
-                )
-                .formLogin(Customizer.withDefaults()) // Use default form login
-                .csrf(AbstractHttpConfigurer::disable); // Disable CSRF for easier API testing (consider enabling for production web apps)
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(Customizer.withDefaults())
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+//                        .requestMatchers("/api/users/**").authenticated()
+//                        .requestMatchers("/api/books/**").authenticated()
+//                        .requestMatchers("/api/loans/**").authenticated()
+//                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(form -> form // Customize formLogin behavior
+//                        // On successful login via API, return 200 OK
+//                        .successHandler((request, response, authentication) -> {
+//                            response.setStatus(HttpServletResponse.SC_OK); // HTTP 200 OK
+//                            response.getWriter().write("Login successful"); // Optional: send a simple message in body
+//                        })
+//                        // On failed login via API, return 401 Unauthorized
+//                        .failureHandler((request, response, exception) -> {
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // HTTP 401 Unauthorized
+//                            response.getWriter().write("Login failed: " + exception.getMessage()); // Send specific error message
+//                        })
+//                        .permitAll() // Ensure /login endpoint is accessible for everyone
+//                )
+//                .logout(logout -> logout // Configure logout behavior for API
+//                        .logoutUrl("/logout") // Specify the logout URL
+//                        .logoutSuccessHandler((request, response, authentication) -> {
+//                            response.setStatus(HttpServletResponse.SC_OK); // HTTP 200 OK on successful logout
+//                            response.getWriter().write("Logout successful");
+//                        })
+//                        .permitAll() // Ensure /logout endpoint is accessible
+//                )
+//                .exceptionHandling(exceptions -> exceptions
+//                        // For unauthorized access to protected resources (e.g., trying to access /api/books without being logged in)
+//                        // Return 401 Unauthorized instead of redirecting to login page
+//                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+//                )
+//                .csrf(AbstractHttpConfigurer::disable); // Disable CSRF for easier API testing (re-enable and handle for production web apps)
+//
+//        return http.build();
+//    }
 
-        return http.build();
-    }
-
     @Bean
-    // CHANGE: The return type must be CorsConfigurationSource, not CorsConfiguration
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        // It's common for React dev server to be on http, not https, by default.
-        // Double-check your React app's actual URL when it starts (e.g., http://localhost:3000)
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // Changed to http
-        configuration.addAllowedHeader("*"); // Allow all headers
-        configuration.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, PUT, DELETE, OPTIONS)
+        // Ensure this origin matches your React app's development server URL
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply this CORS config to all paths
-        return source; // This correctly returns a UrlBasedCorsConfigurationSource which implements CorsConfigurationSource
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
-    @Bean
-    public UserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.builder()
-                .username("testuser")
-                .password(passwordEncoder.encode("StrongP@ssword123"))
-                .roles("USER") // Role for the in-memory test user
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-    }
-
+//    @Bean
+//    public UserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder) {
+//        UserDetails user = User.builder()
+//                .username("testuser")
+//                .password(passwordEncoder.encode("StrongP@ssword123"))
+//                .roles("USER")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user);
+//    }
+//
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

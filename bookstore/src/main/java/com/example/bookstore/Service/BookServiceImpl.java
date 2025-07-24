@@ -26,19 +26,19 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book saveBook(Book book, Set<Long> authorIds){
-        Set<Author> authors = findAuthorsByIds(authorIds);
-        book.setAuthors(authors);
-        return bookRepository.save(book);
-    }
-
-    private Set<Author> findAuthorsByIds(Set<Long> authorIds) {
-        if (authorIds == null || authorIds.isEmpty()) {
-            return new HashSet<>();
+        book.setAvailableCopies(book.getTotalCopies());
+        if(authorIds != null && !authorIds.isEmpty()){
+            Set<Author> authors = new HashSet<>();
+            for(Long authorId : authorIds){
+                authorRepository.findById(authorId)
+                        .ifPresent(authors::add);
+            }
+            book.setAuthors(authors);
+        }else{
+            Set<Author> authors = new HashSet<>();
+            book.setAuthors(authors);
         }
-        List<Author> authors = authorRepository.findAllById(authorIds);
-//        if (authors.size() != authorIds.size()) {
-//        }
-        return new HashSet<>(authors);
+        return bookRepository.save(book);
     }
 
     @Override

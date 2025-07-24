@@ -30,5 +30,9 @@ public class BookRequestDTO {
     @PastOrPresent(message = "Publication date cannot be in the future")
     private LocalDate publicationDate;
 
+    @NotNull(message = "Total copies cannot be null")
+    @Min(value = 1, message = "Total copies must be at least 1")
+    private int totalCopies;
+
     private Set<Long> authorIds;
 }

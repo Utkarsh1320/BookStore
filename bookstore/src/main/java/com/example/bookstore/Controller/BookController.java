@@ -36,6 +36,8 @@ public class BookController {
                 book.getIsbn(),
                 book.getPrice(),
                 book.getPublicationDate(),
+                book.getTotalCopies(),
+                book.getAvailableCopies(),
                 authorDTOs
         );
     }
@@ -48,14 +50,17 @@ public class BookController {
                 author.getBirthDate()
         );
     }
-    private Book convertToEntity(@Valid BookRequestDTO bookResponseDTO){
-        if(bookResponseDTO == null) return null;
+    private Book convertToEntity(@Valid BookRequestDTO bookRequestDTO){
+        if(bookRequestDTO == null) return null;
         return new Book(
                 null,
-                bookResponseDTO.getTitle(),
-                bookResponseDTO.getIsbn(),
-                bookResponseDTO.getPrice(),
-                bookResponseDTO.getPublicationDate(),
+                bookRequestDTO.getTitle(),
+                bookRequestDTO.getIsbn(),
+                bookRequestDTO.getPrice(),
+                bookRequestDTO.getPublicationDate(),
+                bookRequestDTO.getTotalCopies(),
+                bookRequestDTO.getTotalCopies(),
+                null,
                 null
         );
     }

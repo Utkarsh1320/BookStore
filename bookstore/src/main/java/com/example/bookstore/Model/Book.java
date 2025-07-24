@@ -13,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"authors", "loans"})
 @ToString
 public class Book {
@@ -32,6 +33,12 @@ public class Book {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate publicationDate;
 
+    @Column(nullable = false)
+    private int totalCopies;
+
+    @Column(nullable = false)
+    private int availableCopies;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "author_book",
@@ -42,14 +49,4 @@ public class Book {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true )
     private Set<Loan> loans = new HashSet<>();
-
-    public Book(Long id, String title, String isbn, Double price, LocalDate publicationDate, Set<Author> authors ){
-        this.id = id;
-        this.title = title;
-        this.isbn = isbn;
-        this.price = price;
-        this.publicationDate = publicationDate;
-        this.authors = authors;
-    }
-
 }
